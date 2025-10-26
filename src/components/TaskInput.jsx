@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TaskInput = () => {
+const TaskInput = ({ onAddTask}) => {
     // 1. Estado Local do Formulário
     // Por que estado local? Apenas este componente precisa saber o que está sendo digitado.
     const [taskData, setTaskData] = useState({
@@ -24,8 +24,8 @@ const TaskInput = () => {
     const handleSubmit = (e) => {
         e.preventDefault(); // Previne o recarregamento padrão do navegador.
 
-        // Aqui, em breve, você chamará a função que virá do App.jsx (Passo 3)
-        console.log("Dados do formulário prontos:", taskData);
+        //Chamada da função que vem do App.jsx 
+        onAddTask(taskData);
 
         //Limpar o formulário após o envio
         setTaskData({
