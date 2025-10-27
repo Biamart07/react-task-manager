@@ -2,39 +2,45 @@ import { useState } from 'react'
 import './App.css'
 import TaskCard from './components/TaskCard';
 import TaskInput from './components/TaskInput';
+import TaskFilter from './components/TaskFilter';
 
 
-  const MOCK_TAREFAS_INICIAIS = [
-    {
-      id: 1,
-      titulo: "Configurar Tailwind CSS no Vite",
-      descricao: "Inserir @tailwind base, components e utilities no src/index.css.",
-      prioridade: 'Alta', // Usaremos para filtros
-      concluida: true,
-    },
-    {
-      id: 2,
-      titulo: "Criar componente TaskCard",
-      descricao: "Componente responsável por exibir a tarefa.",
-      prioridade: 'Média',
-      concluida: false,
-    },
-    {
-      id: 3,
-      titulo: "Ajustar lógica de ordenação e filtros",
-      descricao: "Implementar a ordenação por prioridade no estado do React.",
-      prioridade: 'Alta',
-      concluida: false,
-    },
-  ];
+const MOCK_TAREFAS_INICIAIS = [
+  {
+    id: 1,
+    titulo: "Configurar Tailwind CSS no Vite",
+    descricao: "Inserir @tailwind base, components e utilities no src/index.css.",
+    prioridade: 'Alta', // Usaremos para filtros
+    concluida: true,
+  },
+  {
+    id: 2,
+    titulo: "Criar componente TaskCard",
+    descricao: "Componente responsável por exibir a tarefa.",
+    prioridade: 'Média',
+    concluida: false,
+  },
+  {
+    id: 3,
+    titulo: "Ajustar lógica de ordenação e filtros",
+    descricao: "Implementar a ordenação por prioridade no estado do React.",
+    prioridade: 'Alta',
+    concluida: false,
+  },
+];
 
 function App() {
   // Estado Principal: A lista de tarefas que será manipulada
   const [tasks, setTasks] = useState(MOCK_TAREFAS_INICIAIS);
 
-  // Em seguida, virão estados para filtros, como:
-  const [filter, setFilter] = useState('Todas');
+  // Armazena a opção de filtro atual
+  const [currentFilter, setCurrentFilter] = useState('Todas');
   const [sortBy, setSortBy] = useState('Prioridade');
+
+  //Função para alterar o estado do filtro (Lifting State Up)
+  const handleFilterChange = (newFilter) => {
+    setCurrentFilter(newFilter);
+  };
 
   //Função de comunicação de volta
   const handleAddTask = (newTaskData) => {
@@ -69,13 +75,32 @@ function App() {
         return {
           ...task, // Copia todas as propriedades existentes (spread operator)
           concluida: !task.concluida, // Inverte o valor booleano
-        }; 
+        };
       }
       // Se não for a tarefa, retorna a tarefa original sem alterações
       return task;
     });
     setTasks(updatedTasks);
   };
+
+  //Lógica do filtro
+
+  const filteredTasks = tasks.filter(task => {
+    switch (currentFilter) {
+      case 'Concluídas':
+        return task.conluida === true;
+      case 'Pendentes':
+        return task.concluida === false;
+      case 'Alta':
+      case 'Média':
+      case 'Baixa':
+        // Se o filtro for uma das prioridades, verifica a prioridade
+        return task.prioridade === currentFilter;
+      case 'Todas':
+      default:
+        return true; //retorna todas as tarefas
+    }
+  });
 
 
   return (
@@ -84,20 +109,27 @@ function App() {
       <h1 className="text-3xl font-bold text-blue-800 dark:text-blue-100 mb-8 text-center">
         React Task Manager (Praticando Hooks)
       </h1>
-      
+
       {/* Aqui virão os componentes de input e listagem */}
       <TaskInput onAddTask={handleAddTask} />
-      
+
+      <TaskFilter onFilterChange={handleFilterChange} currentFilter={currentFilter} />
+
       <div className="max-w-xl mx-auto space-y-4">
-        {tasks.map(task => (
+        {filteredTasks.map(task => (
           // Por enquanto, apenas um texto simples para verificação:
-          <TaskCard 
-          key={task.id} 
-          task={task}
-          onDelete={handleDeleteTask}
-          onToggleComplete={handleToggleComplete}
+          <TaskCard
+            key={task.id}
+            task={task}
+            onDelete={handleDeleteTask}
+            onToggleComplete={handleToggleComplete}
           />
         ))}
+        {filteredTasks.length === 0 && (
+          <p className="text-center text-gray-500 dark:text-gray-400 p-4">
+                Nenhuma tarefa encontrada com o filtro "{currentFilter}".
+            </p>
+        )}
       </div>
     </div>
   );
