@@ -1,6 +1,6 @@
 import React from 'react';
 // Usar desestruturação das 'props' para pegar o objeto 'task' diretamente.
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, onDelete, onToggleComplete }) => {
 
     //Lógica para determinar a cor da prioridade
     const prioridadeCor = () => {
@@ -49,11 +49,11 @@ const TaskCard = ({ task }) => {
             {/* Botões de Ação (Placeholder) */}
             <div className='flex space-x-2'>
                 <button className="text-gray-400 hover:text-green-500 dark:hover:text-green-400"
-                    title="Marcar como Concluída">
+                    title="Marcar como Concluída" onClick={() => onToggleComplete(task.id)}>
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </button>
                 <button className="text-gray-400 hover:text-red-500 dark:hover:text-red-400"
-                    title="Excluir Tarefa">
+                    title="Excluir Tarefa" onClick={() => onDelete(task.id)}>
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                 </button>
             </div>
