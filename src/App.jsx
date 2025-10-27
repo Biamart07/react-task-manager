@@ -53,6 +53,30 @@ function App() {
     // Usamos o spread operator para pegar todas as tarefas antigas e adicionar a nova.
   }
 
+  //Função para deletar tarefas
+  const handleDeleteTask = (idToDelete) => {
+    // Retorna um NOVO array contendo APENAS as tarefas cujo ID não seja o ID a ser excluído
+    const updatedTasks = tasks.filter(task => task.id !== idToDelete);
+    setTasks(updatedTasks);
+  }
+
+  //Função para marcar tarefas como concluídas
+  const handleToggleComplete = (idToToggle) => {
+    const updatedTasks = tasks.map(task => {
+      // Se a tarefa for a que queremos alterar:
+      if (task.id === idToToggle) {
+        //Retorna um NOVO objeto de tarefa com a propriedade 'concluida' invertida
+        return {
+          ...task, // Copia todas as propriedades existentes (spread operator)
+          concluida: !task.concluida, // Inverte o valor booleano
+        }; 
+      }
+      // Se não for a tarefa, retorna a tarefa original sem alterações
+      return task;
+    });
+    setTasks(updatedTasks);
+  };
+
 
   return (
 
@@ -67,7 +91,12 @@ function App() {
       <div className="max-w-xl mx-auto space-y-4">
         {tasks.map(task => (
           // Por enquanto, apenas um texto simples para verificação:
-          <TaskCard key={task.id} task={task} />
+          <TaskCard 
+          key={task.id} 
+          task={task}
+          onDelete={handleDeleteTask}
+          onToggleComplete={handleToggleComplete}
+          />
         ))}
       </div>
     </div>
