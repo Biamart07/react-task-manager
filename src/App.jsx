@@ -3,6 +3,8 @@ import './App.css'
 import TaskCard from './components/TaskCard';
 import TaskInput from './components/TaskInput';
 import TaskFilter from './components/TaskFilter';
+import TaskSort from './components/TaskSort';
+import EditModal from './components/EditModal';
 
 
 const MOCK_TAREFAS_INICIAIS = [
@@ -36,6 +38,13 @@ function App() {
   // Armazena a opção de filtro atual
   const [currentFilter, setCurrentFilter] = useState('Todas');
   const [sortBy, setSortBy] = useState('Prioridade');
+  //null pois o modal irá começar fechado
+  const [editingTask, setEditingTask] = useState(null);
+
+  //Função para ordenação por prioridade
+  const handleSortChange = (newSortBy) => {
+    setSortBy(newSortBy);
+  }
 
   //Função para alterar o estado do filtro (Lifting State Up)
   const handleFilterChange = (newFilter) => {
@@ -83,12 +92,12 @@ function App() {
     setTasks(updatedTasks);
   };
 
-  //Lógica do filtro
+  //Lógica de filtragem e ordenação
 
   const filteredTasks = tasks.filter(task => {
     switch (currentFilter) {
       case 'Concluídas':
-        return task.conluida === true;
+        return task.concluida === true;
       case 'Pendentes':
         return task.concluida === false;
       case 'Alta':
@@ -102,6 +111,60 @@ function App() {
     }
   });
 
+  let sortedTasks =  [...filteredTasks]; //[...filteredTasks] para garantir que estamos ordenando uma CÓPIA 
+  // do array, e não modificando o array original (Imutabilidade!).
+
+  if (sortBy === 'Prioridade') {
+    // ORDENAÇÃO POR PRIORIDADE: Lógica mais complexa, usando um mapa de valores
+    const priorityOrder = { 'Alta': 3, 'Média': 2, 'Baixa': 1};
+
+    sortedTasks.sort((a, b) => {
+      // Compara o valor numérico da prioridade (3 > 2 > 1)
+      return priorityOrder[b.prioridade] - priorityOrder[a.prioridade];
+      // b - a: Ordena do maior (Alta) para o menor (Baixa)
+      // a - b: Ordena do menor (Baixa) para o maior (Alta)
+    });
+  } else if (sortBy === 'ID') {
+    sortedTasks.sort((a, b) => {
+      // Ordena do ID Maior para o Menor (Mais Recente no Topo)
+      return b.id - a.id;
+    });
+  }
+
+  // Ordena por tarefas concluídas primeiro
+  /*
+  else if (sortBy === 'Concluída') {
+      // Ordena por tarefas não concluídas primeiro
+      sortedTasks.sort((a, b) => (a.concluida === b.concluida) ? 0 : a.concluida ? 1 : -1);
+  }
+  */
+
+  const handleEditClick = (taskId) => {
+    // 1. Encontra a tarefa no array de tasks
+    const taskToEdit = tasks.find(task => task.id === taskId);
+
+    //2. Define o estado para o objeto encontrado, abrindo o modal
+    setEditingTask(taskToEdit);
+  }
+
+  //Função de atualização final (UPDATE)
+
+  const handleUpdateTask = (updatedTask) => {
+    //Mapear o array para encontrat e substituir a tarefa antiga pela nova
+    const updatedTasks = tasks.map(task => {
+      if (task.id === updatedTask.id) {
+        // Se encontrar o ID, retorna o objeto atualizado
+        return updatedTask;
+      }
+      //Caso contrário, retorna a tarefa original
+      return task;
+    });
+    setTasks(updatedTasks);
+  };
+
+  const handleCloseModal = () => {
+    setEditingTask(null);
+  };
 
   return (
 
@@ -115,22 +178,30 @@ function App() {
 
       <TaskFilter onFilterChange={handleFilterChange} currentFilter={currentFilter} />
 
+      <TaskSort onSortChange={handleSortChange} sortBy={sortBy} />
+
       <div className="max-w-xl mx-auto space-y-4">
-        {filteredTasks.map(task => (
+        {sortedTasks.map(task => (
           // Por enquanto, apenas um texto simples para verificação:
           <TaskCard
             key={task.id}
             task={task}
             onDelete={handleDeleteTask}
             onToggleComplete={handleToggleComplete}
+            onEdit={handleEditClick}
           />
         ))}
-        {filteredTasks.length === 0 && (
+        {sortedTasks.length === 0 && (
           <p className="text-center text-gray-500 dark:text-gray-400 p-4">
                 Nenhuma tarefa encontrada com o filtro "{currentFilter}".
             </p>
         )}
       </div>
+
+      <EditModal
+      task={editingTask}
+      onSave={handleUpdateTask}
+      onClose={handleCloseModal} />
     </div>
   );
 }

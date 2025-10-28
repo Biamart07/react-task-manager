@@ -1,6 +1,6 @@
 import React from 'react';
 // Usar desestruturação das 'props' para pegar o objeto 'task' diretamente.
-const TaskCard = ({ task, onDelete, onToggleComplete }) => {
+const TaskCard = ({ task, onDelete, onToggleComplete, onEdit }) => {
 
     //Lógica para determinar a cor da prioridade
     const prioridadeCor = () => {
@@ -48,6 +48,16 @@ const TaskCard = ({ task, onDelete, onToggleComplete }) => {
 
             {/* Botões de Ação (Placeholder) */}
             <div className='flex space-x-2'>
+                {/* EDIÇÃO (Chama a função de abrir o modal) */}
+                <button className="text-gray-400 hover:text-blue-800 dark:hover:text-blue-400"
+                    title="Editar Tarefa"
+                    onClick={() => onEdit(task.id)} // LIGAÇÃO COM A LÓGICA DO App.jsx
+                >
+                    {/* Ícone de Edição (Pencil SVG) */}
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </button>
                 <button className="text-gray-400 hover:text-green-500 dark:hover:text-green-400"
                     title="Marcar como Concluída" onClick={() => onToggleComplete(task.id)}>
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
