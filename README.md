@@ -8,7 +8,7 @@ O Task Manager simula uma aplicação de domínio onde o usuário pode gerenciar
 
 ---
 
-## ✨ Destaques Técnicos (O que o Recrutador Procura)
+## ✨ Destaques Técnicos
 
 * **Gestão de Estado Complexa (Hooks):** Utilização eficiente do `useState` para gerenciar o array principal de tarefas e múltiplos estados secundários (Filtro, Ordenação e Modal de Edição).
 * **Imutabilidade no Array:** Todas as operações de **Criação, Exclusão e Atualização (CRUD)** são feitas respeitando a imutabilidade do estado, utilizando os métodos `.filter()`, `.map()`, e o *Spread Operator* (`...`).
