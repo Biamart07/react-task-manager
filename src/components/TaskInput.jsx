@@ -60,7 +60,7 @@ const TaskInput = ({ onAddTask}) => {
                 </div>
                 {/* Campo Prioridade (Select) */}
                 <div className="mt-4">
-                    <label htmlFor="prioridade" className="block text-sm font-medium text-gray-700 dar:text-gray-300 font-['Roboto']">Prioridade:</label>
+                    <label htmlFor="prioridade" className="block text-sm font-medium text-gray-700 dark:text-gray-300 font-['Roboto']">Prioridade:</label>
                     <select id="prioridade" name="prioridade" value={taskData.prioridade} onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-blue-800 focus:border-blue-800">
                         <option key="alta" value="Alta">Alta</option>
