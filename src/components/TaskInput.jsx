@@ -24,6 +24,12 @@ const TaskInput = ({ onAddTask}) => {
     const handleSubmit = (e) => {
         e.preventDefault(); // Previne o recarregamento padrão do navegador.
 
+        // Validação simples para o título
+        if (!taskData.titulo.trim()) {
+            alert('Por favor, insira um título para a tarefa.');
+            return; // Interrompe a função se o título estiver vazio
+        }
+
         //Chamada da função que vem do App.jsx 
         onAddTask(taskData);
 
@@ -54,12 +60,12 @@ const TaskInput = ({ onAddTask}) => {
                 </div>
                 {/* Campo Prioridade (Select) */}
                 <div className="mt-4">
-                    <label hmltFor="prioridade" className="block text-sm font-medium text-gray-700 dar:text-gray-300 font-['Roboto']">Prioridade:</label>
+                    <label htmlFor="prioridade" className="block text-sm font-medium text-gray-700 dar:text-gray-300 font-['Roboto']">Prioridade:</label>
                     <select id="prioridade" name="prioridade" value={taskData.prioridade} onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-blue-800 focus:border-blue-800">
-                        <option value="Alta">Alta</option>
-                        <option value="Média">Média</option>
-                        <option value="Baixa">Baixa</option>
+                        <option key="alta" value="Alta">Alta</option>
+                        <option key="media" value="Média">Média</option>
+                        <option key="baixa" value="Baixa">Baixa</option>
                     </select>
                 </div>
                 {/* Botão de Submissão */}
