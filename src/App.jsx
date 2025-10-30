@@ -1,35 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import './App.css'
 import TaskCard from './components/TaskCard';
 import TaskInput from './components/TaskInput';
 import TaskFilter from './components/TaskFilter';
 import TaskSort from './components/TaskSort';
 import EditModal from './components/EditModal';
+import { MOCK_TAREFAS_INICIAIS } from './data/tasks';
+import { PRIORITY_ORDER, PRIORITIES } from './utils/priority';
 
-
-const MOCK_TAREFAS_INICIAIS = [
-  {
-    id: 1,
-    titulo: "Configurar Tailwind CSS no Vite",
-    descricao: "Inserir @tailwind base, components e utilities no src/index.css.",
-    prioridade: 'Alta', // Usaremos para filtros
-    concluida: true,
-  },
-  {
-    id: 2,
-    titulo: "Criar componente TaskCard",
-    descricao: "Componente responsável por exibir a tarefa.",
-    prioridade: 'Média',
-    concluida: false,
-  },
-  {
-    id: 3,
-    titulo: "Ajustar lógica de ordenação e filtros",
-    descricao: "Implementar a ordenação por prioridade no estado do React.",
-    prioridade: 'Alta',
-    concluida: false,
-  },
-];
 
 function App() {
   // Estado Principal: A lista de tarefas que será manipulada
@@ -40,6 +18,7 @@ function App() {
   const [sortBy, setSortBy] = useState('Prioridade');
   //null pois o modal irá começar fechado
   const [editingTask, setEditingTask] = useState(null);
+  const nextId = useRef(MOCK_TAREFAS_INICIAIS.length + 1);
 
   //Função para ordenação por prioridade
   const handleSortChange = (newSortBy) => {
@@ -53,15 +32,13 @@ function App() {
 
   //Função de comunicação de volta
   const handleAddTask = (newTaskData) => {
-    //Criar um novo ID (Simulando o Banco de Dados)
-    const newId = tasks.length > 0 ? Math.max(...tasks.map(task => task.id)) + 1 : 1;
-
     //Criar o objeto de nova tarefa completo
     const newTask = {
       ...newTaskData, // Dados recebidos (titulo, descricao, prioridade)
-      id: newId,
+      id: nextId.current,
       concluida: false, // Toda nova tarefa começa como não concluída
     };
+    nextId.current++;
 
     //Atualizar o estado principal (CRÍTICO: Não use .push(), crie um novo array!)
     setTasks([...tasks, newTask]);
@@ -100,9 +77,9 @@ function App() {
         return task.concluida === true;
       case 'Pendentes':
         return task.concluida === false;
-      case 'Alta':
-      case 'Média':
-      case 'Baixa':
+      case PRIORITIES.ALTA:
+      case PRIORITIES.MEDIA:
+      case PRIORITIES.BAIXA:
         // Se o filtro for uma das prioridades, verifica a prioridade
         return task.prioridade === currentFilter;
       case 'Todas':
@@ -111,16 +88,14 @@ function App() {
     }
   });
 
-  let sortedTasks =  [...filteredTasks]; //[...filteredTasks] para garantir que estamos ordenando uma CÓPIA 
+  let sortedTasks =  [...filteredTasks]; //[...filteredTasks] para garantir que estamos ordenando uma CÓPIA
   // do array, e não modificando o array original (Imutabilidade!).
 
   if (sortBy === 'Prioridade') {
     // ORDENAÇÃO POR PRIORIDADE: Lógica mais complexa, usando um mapa de valores
-    const priorityOrder = { 'Alta': 3, 'Média': 2, 'Baixa': 1};
-
     sortedTasks.sort((a, b) => {
       // Compara o valor numérico da prioridade (3 > 2 > 1)
-      return priorityOrder[b.prioridade] - priorityOrder[a.prioridade];
+      return PRIORITY_ORDER[b.prioridade] - PRIORITY_ORDER[a.prioridade];
       // b - a: Ordena do maior (Alta) para o menor (Baixa)
       // a - b: Ordena do menor (Baixa) para o maior (Alta)
     });
@@ -130,14 +105,6 @@ function App() {
       return b.id - a.id;
     });
   }
-
-  // Ordena por tarefas concluídas primeiro
-  /*
-  else if (sortBy === 'Concluída') {
-      // Ordena por tarefas não concluídas primeiro
-      sortedTasks.sort((a, b) => (a.concluida === b.concluida) ? 0 : a.concluida ? 1 : -1);
-  }
-  */
 
   const handleEditClick = (taskId) => {
     // 1. Encontra a tarefa no array de tasks

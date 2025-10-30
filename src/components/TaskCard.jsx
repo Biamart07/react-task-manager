@@ -1,20 +1,10 @@
 import React from 'react';
+import { getPriorityColor } from '../utils/priority';
 // Usar desestruturação das 'props' para pegar o objeto 'task' diretamente.
 const TaskCard = ({ task, onDelete, onToggleComplete, onEdit }) => {
 
     //Lógica para determinar a cor da prioridade
-    const prioridadeCor = () => {
-        switch (task.prioridade) {
-            case 'Alta':
-                return 'border-red-600 dark:border-red-500';
-            case 'Média':
-                return 'border-yellow-500 dark:border-yellow-400';
-            case 'Baixa':
-                return 'border-blue-500 dark:border-blue-400';
-            default:
-                return 'border-gray-300 dark:border-gray-600';
-        }
-    };
+    const prioridadeCor = getPriorityColor(task.prioridade);
 
     //Condição para a linha de tarefas concluídas
     const estiloCompletado = task.concluida ? 'opacity-60 line-through' : '';
@@ -23,7 +13,7 @@ const TaskCard = ({ task, onDelete, onToggleComplete, onEdit }) => {
     const cardClasses = `
     p-4 bg-white dark:bg-gray-800 shadow-md rounded-lg 
     border-l-4 
-    ${prioridadeCor()} 
+    ${prioridadeCor}
     ${estiloCompletado}
     flex justify-between items-start 
     transition duration-300 hover:shadow-lg
